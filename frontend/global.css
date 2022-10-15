@@ -1,0 +1,56 @@
+html {
+    text-align: center;
+    align-content: center;
+    background-color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    vertical-align: middle;
+}
+body {
+    margin: 0;
+}
+label {
+    display: block;
+    margin: 1em;
+}
+input {
+    display: block;
+    margin: 1em auto;
+}
+button {
+    background-color: forestgreen;
+    color: whitesmoke;
+    display: block;
+    border-radius: 2em;
+    border-color: forestgreen;
+    padding: 1em 3em;
+    margin: 1em auto;
+}
+button:hover {
+    cursor: pointer;
+}
+button:disabled {
+    background-color: maroon;
+    border-color: maroon;
+    cursor: default;
+}
+.upper-left {
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: 3;
+    background-color: white;
+}
+.upper-left button {
+    padding: 1em;
+    background-color: azure;
+    border-color: black;
+    color: black;
+    margin: 0;
+}
+.container {
+    padding-top: 25vh;
+    height: 70vh;
+    width: 100%;
+    top: 0;
+    position: fixed;
+}
