@@ -45,14 +45,14 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 	rawAuth := fmt.Sprintf("%s:%s", config.Username, config.Password)
 	auth := base64.StdEncoding.EncodeToString([]byte(rawAuth))
 	req.Header["Authorization"] = []string{fmt.Sprintf("Basic %s", auth)}
-	// resp, err := http.DefaultClient.Do(req)
-	// if err != nil {
-	// 	return err
-	// }
-	// if resp.StatusCode != http.StatusCreated {
-	// 	return &StatusCodeError{resp.StatusCode, http.StatusCreated, ""}
-	// }
-	fmt.Println("skipping request", req)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != http.StatusCreated {
+		return &StatusCodeError{resp.StatusCode, http.StatusCreated, ""}
+	}
+	//fmt.Println("skipping request", req)
 	return nil
 }
 
