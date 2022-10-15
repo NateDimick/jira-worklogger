@@ -1,7 +1,6 @@
 <script lang="ts">
 import { EventsOn } from "./wailsjs/runtime/runtime";
 
-
 let error: string = ""
 
 function closeError() {
@@ -11,14 +10,14 @@ function closeError() {
 EventsOn("error", (err: string) => {
     console.log(`got error: ${err}`)
     error = err
-    })
+})
 </script>
 
 {#if error !== ""}
 <div>
     <p>{error}</p>
     <button on:click={closeError}>
-        &#10062; <!-- X -->
+        Dismiss
     </button>
 </div>
 {/if}
@@ -26,9 +25,21 @@ EventsOn("error", (err: string) => {
 <style>
 div {
     position: fixed;
-    z-index: 10;
     background-color: red;
     color: whitesmoke;
+    bottom: 0;
+    width: 100%;
+}
+p {
+    display: inline;
+    margin: 0 auto;
+}
+button {
+    display: inline;
+    background-color: red;
+    border-color: black;
+    padding: 1em;
+    right: 0;
     bottom: 0;
 }
 </style>

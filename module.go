@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -88,6 +89,13 @@ func (a *App) GetConfig() Config {
 		return *new(Config)
 	}
 	return *config
+}
+
+func (a *App) ForceError() {
+	_, err := strconv.Atoi("pizza")
+	if err != nil {
+		a.emitError(err)
+	}
 }
 
 func startStop(update IssueUpdate, ts *time.Time) error {

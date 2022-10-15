@@ -1,10 +1,8 @@
 <script lang="ts">
 import { configComplete } from "./config";
 import { config, issue, View, view } from "./stores";
-import { AbortCurrentIssue, StartStopWorkTime } from "./wailsjs/go/main/App";
+import { AbortCurrentIssue, ForceError, StartStopWorkTime } from "./wailsjs/go/main/App";
 import type { main } from "./wailsjs/go/models";
-
-
 
 let comment: string = ""
 let workTime: string = ""
@@ -91,6 +89,9 @@ $: {
             <button on:click={toggle} disabled={issueKey === ""}>
                 Start Work Now
             </button>
+            <!-- <button on:click={ForceError}>
+                DEBUG: FORCE ERROR
+            </button> -->
         {/if}
     </div>
 </div>

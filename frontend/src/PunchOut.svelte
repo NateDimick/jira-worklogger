@@ -2,8 +2,8 @@
 import type { main } from "./wailsjs/go/models";
 import { config, issue, View, view } from "./stores"
 import Back from "./Back.svelte";
-    import { ManualStopWork } from "./wailsjs/go/main/App";
-    import { configComplete } from "./config";
+import { ManualStopWork } from "./wailsjs/go/main/App";
+import { configComplete } from "./config";
 
 
 let issueKey: string = $issue.IssueKey
