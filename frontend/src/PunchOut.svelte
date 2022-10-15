@@ -1,8 +1,9 @@
 <script lang="ts">
 import type { main } from "./wailsjs/go/models";
-import { issue, View, view } from "./stores"
+import { config, issue, View, view } from "./stores"
 import Back from "./Back.svelte";
     import { ManualStopWork } from "./wailsjs/go/main/App";
+    import { configComplete } from "./config";
 
 
 let issueKey: string = $issue.IssueKey
@@ -11,7 +12,7 @@ let workEndDt: string = localDt()
 
 function localDt(): string  {
     let d = new Date()
-    return `${d.getFullYear()}-${padNumber(d.getMonth())}-${padNumber(d.getDate())}T${padNumber(d.getHours())}:${padNumber(d.getMinutes())}`
+    return `${d.getFullYear()}-${padNumber(d.getMonth() + 1)}-${padNumber(d.getDate())}T${padNumber(d.getHours())}:${padNumber(d.getMinutes())}`
 }
 
 function padNumber(n: number) {
@@ -36,6 +37,11 @@ function logWork() {
         }
     })
 }
+
+function inFuture(ts: string): boolean {
+    let result = Date.parse(ts) > Date.now()
+    return result
+}
 </script>
 
 <Back/>
@@ -45,7 +51,7 @@ function logWork() {
     <input type="text" name="comment" bind:value={comment}>
     <label for="workEnd">Work End Time</label>
     <input type="datetime-local" name="workEnd" bind:value={workEndDt}>
-    <button on:click={logWork}>
+    <button on:click={logWork} disabled={!configComplete($config) || inFuture(workEndDt)}>
         Log Work Ending at {workEndDt}
     </button>
 </div>

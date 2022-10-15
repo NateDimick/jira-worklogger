@@ -1,5 +1,6 @@
 <script lang="ts">
-import { issue, View, view } from "./stores";
+import { configComplete } from "./config";
+import { config, issue, View, view } from "./stores";
 import { AbortCurrentIssue, StartStopWorkTime } from "./wailsjs/go/main/App";
 import type { main } from "./wailsjs/go/models";
 
@@ -72,7 +73,7 @@ $: {
     {#if active }
         <label for="comment">Comment</label>
         <input type="text" name="comment" bind:value={comment}>
-        <p>Working on {issueKey} for</p>
+        <p>Current Session on {issueKey}</p>
         <p>{workTime}</p>
     {/if}
     <div class="btn-row">
@@ -80,17 +81,15 @@ $: {
             <button on:click={abort}>
                 Nevermind
             </button>
-        {/if}
-        <button on:click={toggle} disabled={issueKey === ""}>
-            {#if !active}
-                Start Work Now
-            {:else}
+            <button on:click={toggle} disabled={!configComplete($config)}>
                 Log Work Now
-            {/if}
-        </button>
-        {#if active}
+            </button>
             <button on:click={punchOut}>
                 Pick End Time
+            </button>
+        {:else}
+            <button on:click={toggle} disabled={issueKey === ""}>
+                Start Work Now
             </button>
         {/if}
     </div>
