@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	appDir     string = ".jira-time"
+	appDir     string = ".worklogger"
 	configFile string = "config.json"
 	stateFile  string = "issue.json"
 )

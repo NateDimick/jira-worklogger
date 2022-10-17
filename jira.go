@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +11,7 @@ import (
 
 const (
 	iso8601Layout string = "2006-01-02T15:04:05.999Z"
+	jiraLayout    string = "2006-01-02T15:04:05-0700"
 )
 
 type AddWorklogBody struct {
@@ -42,9 +42,7 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 		return err
 	}
 	// add auth header
-	rawAuth := fmt.Sprintf("%s:%s", config.Username, config.Password)
-	auth := base64.StdEncoding.EncodeToString([]byte(rawAuth))
-	req.Header["Authorization"] = []string{fmt.Sprintf("Basic %s", auth)}
+	req.Header["Authorization"] = []string{fmt.Sprintf("Bearer %s", config.Token)}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
@@ -58,8 +56,9 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 
 func buildRequestBody(comment string, startTs, endTs *time.Time) (io.Reader, error) {
 	tss := int64(endTs.Sub(*startTs).Seconds())
-	stString := startTs.Format(iso8601Layout)
+	stString := startTs.Format(jiraLayout)
 	reqBody := AddWorklogBody{comment, stString, tss}
+	fmt.Println(reqBody)
 	body, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, err

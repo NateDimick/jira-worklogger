@@ -12,9 +12,8 @@ type IssueUpdate struct {
 }
 
 type Config struct {
-	Server   string `json:"Server"`
-	Username string `json:"Username"`
-	Password string `json:"Password"`
+	Server string `json:"Server"`
+	Token  string `json:"Token"`
 }
 
 type CurrentIssue struct {
