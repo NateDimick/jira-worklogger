@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -15,9 +16,9 @@ const (
 )
 
 type AddWorklogBody struct {
-	Comment          string `json:"comment"`
-	StartTime        string `json:"started"`
-	TimeSpentSeconds int64  `json:"timeSpentSeconds"`
+	Comment   string `json:"comment"`
+	StartTime string `json:"started"`
+	TimeSpent string `json:"timeSpent"`
 }
 
 type StatusCodeError struct {
@@ -55,13 +56,30 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 }
 
 func buildRequestBody(comment string, startTs, endTs *time.Time) (io.Reader, error) {
-	tss := int64(endTs.Sub(*startTs).Seconds())
+	tss := int(endTs.Sub(*startTs).Seconds())
 	stString := startTs.Format(jiraLayout)
-	reqBody := AddWorklogBody{comment, stString, tss}
-	fmt.Println(reqBody)
+	reqBody := AddWorklogBody{comment, stString, buildTimeSpent(tss)}
 	body, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, err
 	}
 	return bytes.NewReader(body), nil
+}
+
+func buildTimeSpent(seconds int) string {
+	ss := seconds % 60
+	minutes := seconds / 60
+	mm := minutes % 60
+	hh := minutes / 60
+	var strb strings.Builder
+	if hh != 0 {
+		strb.WriteString(fmt.Sprintf("%dh", hh))
+	}
+	if mm != 0 {
+		strb.WriteString(fmt.Sprintf("%dm", mm))
+	}
+	if ss != 0 {
+		strb.WriteString(fmt.Sprintf("%ds", ss))
+	}
+	return strb.String()
 }

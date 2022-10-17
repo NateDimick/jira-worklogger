@@ -1,4 +1,4 @@
-module changeme
+module worklogger
 
 go 1.18
 
