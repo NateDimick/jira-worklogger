@@ -31,19 +31,24 @@ func (s *StatusCodeError) Error() string {
 	return fmt.Sprintf("Wrong status code: expected %d, received %d", s.CodeExpected, s.CodeActual)
 }
 
-// referenced https://docs.atlassian.com/software/jira/docs/api/REST/7.1.2/#api/2/issue-addWorklog
+// referenced https://docs.atlassian.com/software/jira/docs/api/REST/9.3.0/#api/2/issue-addWorklog
 func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) error {
 	body, err := buildRequestBody(update.Comment, startTs, endTs)
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://%s/rest/api/v2/issue/%s/worklog?adjustEstimate=auto", config.Server, update.IssueKey)
+	url := fmt.Sprintf("https://%s/rest/api/2/issue/%s/worklog", config.Server, update.IssueKey)
 	req, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return err
 	}
+	// query string
+	qs := req.URL.Query()
+	qs.Add("adjustEstimate", "auto")
+	req.URL.RawQuery = qs.Encode()
 	// add auth header
 	req.Header["Authorization"] = []string{fmt.Sprintf("Bearer %s", config.Token)}
+	fmt.Printf("request: %+v\n", req)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
@@ -59,6 +64,7 @@ func buildRequestBody(comment string, startTs, endTs *time.Time) (io.Reader, err
 	tss := int(endTs.Sub(*startTs).Seconds())
 	stString := startTs.Format(jiraLayout)
 	reqBody := AddWorklogBody{comment, stString, buildTimeSpent(tss)}
+	fmt.Printf("request body: %+v\n", reqBody)
 	body, err := json.Marshal(reqBody)
 	if err != nil {
 		return nil, err

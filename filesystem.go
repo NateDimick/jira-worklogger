@@ -28,7 +28,7 @@ func createAppDir() error {
 	}
 	if _, err := os.Stat(appDirPath); os.IsNotExist(err) {
 		fmt.Println("creating app directory")
-		err = os.Mkdir(appDirPath, os.ModeDir)
+		err = os.Mkdir(appDirPath, 0777)
 		if err != nil {
 			return err
 		}
