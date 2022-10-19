@@ -6,13 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 )
 
 const (
 	iso8601Layout string = "2006-01-02T15:04:05.999Z"
-	jiraLayout    string = "2006-01-02T15:04:05-0700"
+	jiraLayout    string = "2006-01-02T15:04:05.000-0700"
 )
 
 type AddWorklogBody struct {
@@ -48,6 +47,7 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 	req.URL.RawQuery = qs.Encode()
 	// add auth header
 	req.Header["Authorization"] = []string{fmt.Sprintf("Bearer %s", config.Token)}
+	req.Header["Content-Type"] = []string{"application/json"}
 	fmt.Printf("request: %+v\n", req)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -56,7 +56,6 @@ func addWorkLog(update IssueUpdate, startTs, endTs *time.Time, config *Config) e
 	if resp.StatusCode != http.StatusCreated {
 		return &StatusCodeError{resp.StatusCode, http.StatusCreated, ""}
 	}
-	//fmt.Println("skipping request", req)
 	return nil
 }
 
@@ -73,19 +72,17 @@ func buildRequestBody(comment string, startTs, endTs *time.Time) (io.Reader, err
 }
 
 func buildTimeSpent(seconds int) string {
-	ss := seconds % 60
 	minutes := seconds / 60
 	mm := minutes % 60
 	hh := minutes / 60
-	var strb strings.Builder
+	var timeSpent string
 	if hh != 0 {
-		strb.WriteString(fmt.Sprintf("%dh", hh))
+		hours := float64(minutes) / 60.0
+		timeSpent = fmt.Sprintf("%.1fh", hours)
+	} else if mm != 0 {
+		timeSpent = fmt.Sprintf("%dm", minutes)
+	} else if hh == 0 && mm == 0 {
+		timeSpent = "1m"
 	}
-	if mm != 0 {
-		strb.WriteString(fmt.Sprintf("%dm", mm))
-	}
-	if ss != 0 {
-		strb.WriteString(fmt.Sprintf("%ds", ss))
-	}
-	return strb.String()
+	return timeSpent
 }

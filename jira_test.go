@@ -29,9 +29,12 @@ func TestBuildTimeSpent(t *testing.T) {
 		seconds  int
 		expected string
 	}{
-		{75, "1m15s"},
-		{3700, "1h1m40s"},
-		{7327, "2h2m7s"},
+		{45, "1m"},
+		{150, "2m"},
+		{2805, "46m"},
+		{3700, "1.0h"},
+		{7327, "2.0h"},
+		{9000, "2.5h"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.expected, func(t *testing.T) {
